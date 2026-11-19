@@ -38,17 +38,17 @@ class JobHandler {
       );
       return ok(jobs);
     } catch (e) {
-      return serverError(e.toString());
+      return fail(e.toString());
     }
   }
 
   Future<Response> _get(Request request, String id) async {
     try {
-      final job = await _repo.get(id);
+      final job = await _repo.getById(id);
       if (job == null) return notFound('Job not found');
       return ok(job);
     } catch (e) {
-      return serverError(e.toString());
+      return fail(e.toString());
     }
   }
 
@@ -64,7 +64,7 @@ class JobHandler {
       final job = await _repo.create(body);
       return created(job);
     } catch (e) {
-      return serverError(e.toString());
+      return fail(e.toString());
     }
   }
 
@@ -74,7 +74,7 @@ class JobHandler {
       final job = await _repo.update(id, body);
       return ok(job);
     } catch (e) {
-      return serverError(e.toString());
+      return fail(e.toString());
     }
   }
 
@@ -90,7 +90,7 @@ class JobHandler {
       });
       return ok(job);
     } catch (e) {
-      return serverError(e.toString());
+      return fail(e.toString());
     }
   }
 
@@ -103,7 +103,7 @@ class JobHandler {
       });
       return ok(job);
     } catch (e) {
-      return serverError(e.toString());
+      return fail(e.toString());
     }
   }
 
@@ -117,7 +117,7 @@ class JobHandler {
       });
       return ok(job);
     } catch (e) {
-      return serverError(e.toString());
+      return fail(e.toString());
     }
   }
 
@@ -130,7 +130,7 @@ class JobHandler {
       });
       return ok(job);
     } catch (e) {
-      return serverError(e.toString());
+      return fail(e.toString());
     }
   }
 }

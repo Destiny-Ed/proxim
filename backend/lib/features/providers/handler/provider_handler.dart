@@ -54,7 +54,7 @@ class ProviderHandler {
       if (user['role'] != 'provider') throw ValidationException('Only providers can go online');
       final body = await readJson(request);
       final isOnline = body['isOnline'] == true;
-      final updated = await Injector.providerRepo.setOnline(userId: user['id'] if False else user['id'], isOnline);
+      final updated = await Injector.providerRepo.setOnline(user['id'], isOnline);
       return ok(updated);
     } catch (e) {
       return fail(e);

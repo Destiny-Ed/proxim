@@ -1,0 +1,17 @@
+name: proxim_backend
+description: Proxim API — on-demand artisans marketplace for Nigeria
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  shelf: ^1.4.2
+  shelf_router: ^1.1.4
+  shelf_cors_headers: ^0.1.5
+  uuid: ^4.5.1
+  collection: ^1.18.0
+
+dev_dependencies:
+  lints: ^4.0.0

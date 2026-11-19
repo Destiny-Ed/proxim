@@ -2,6 +2,8 @@ import 'data_source.dart';
 import 'memory_data_source.dart';
 import 'firebase_data_source.dart';
 
+/// Factory — change DATA_SOURCE env var and restart.
+/// No changes needed in handlers / repositories.
 class DataSourceFactory {
   static AuthDataSource createAuth(String type) {
     switch (type.toLowerCase()) {

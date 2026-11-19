@@ -59,10 +59,15 @@ class _WalletScreenState extends State<WalletScreen> {
       final amount = double.tryParse(ctrl.text.replaceAll(',', ''));
       if (amount == null || amount <= 0) return;
       try {
-        await context.read<AppState>().api.topUp(amount, reference: 'DEMO-${DateTime.now().millisecondsSinceEpoch}');
+        await context.read<AppState>().api.topUp(
+              amount,
+              reference: 'DEMO-${DateTime.now().millisecondsSinceEpoch}',
+            );
         await _load();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Wallet topped up')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Wallet topped up')),
+          );
         }
       } catch (e) {
         if (mounted) {
@@ -186,7 +191,10 @@ class _WalletScreenState extends State<WalletScreen> {
   String _fmt(dynamic v) {
     if (v == null) return '0';
     final n = (v as num).toInt();
-    return n.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},');
+    return n.toString().replaceAllMapped(
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (m) => '${m[1]},',
+        );
   }
 
   String _shortDate(dynamic v) {

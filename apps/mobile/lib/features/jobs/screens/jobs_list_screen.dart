@@ -129,7 +129,7 @@ class _JobsListScreenState extends State<JobsListScreen> {
                                     ),
                                     const Spacer(),
                                     Text(
-                                      _shortDate(j['createdAt']),
+                                      _relative(j['createdAt']),
                                       style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary),
                                     ),
                                   ],
@@ -145,55 +145,22 @@ class _JobsListScreenState extends State<JobsListScreen> {
 
   String _fmt(dynamic v) {
     if (v == null) return '0';
-    final n = (v as num).toInt();
-    return n.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},');
+    return (v as num).toInt().toString().replaceAllMapped(
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (m) => '${m[1]},',
+        );
   }
 
-  String _shortDate(dynamic v) {
-    if (v == null) return '';
+  String _relative(dynamic iso) {
+    if (iso == null) return '';
     try {
-      final d = DateTime.parse(v.toString());
-      return '${d.day}/${d.month}/${d.year}';
+      final dt = DateTime.parse(iso as String);
+      final diff = DateTime.now().difference(dt);
+      if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+      if (diff.inHours < 24) return '${diff.inHours}h ago';
+      return '${diff.inDays}d ago';
     } catch (_) {
       return '';
     }
-  }
-}
-
-class StatusChip extends StatelessWidget {
-  final String status;
-  const StatusChip({super.key, required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    Color bg;
-    Color fg;
-    switch (status) {
-      case 'accepted':
-        bg = const Color(0xFFE3F2FD);
-        fg = AppTheme.info;
-        break;
-      case 'in_progress':
-        bg = AppTheme.accentSoft;
-        fg = AppTheme.accent;
-        break;
-      case 'completed':
-        bg = const Color(0xFFE8F5E9);
-        fg = const Color(0xFF2E7D32);
-        break;
-      case 'cancelled':
-        bg = const Color(0xFFFFEBEE);
-        fg = AppTheme.danger;
-        break;
-      default:
-        bg = const Color(0xFFFFF3E0);
-        fg = AppTheme.warning;
-    }
-    final label = status == 'in_progress' ? 'In progress' : status[0].toUpperCase() + status.substring(1);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(12)),
-      child: Text(label, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: fg)),
-    );
   }
 }

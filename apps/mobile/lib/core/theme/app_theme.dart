@@ -13,6 +13,7 @@ class AppTheme {
   static const Color danger = Color(0xFFD32F2F);
   static const Color warning = Color(0xFFF57C00);
   static const Color info = Color(0xFF1976D2);
+  static const Color online = Color(0xFF2E7D32);
 
   static ThemeData get light {
     return ThemeData(

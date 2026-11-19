@@ -19,7 +19,7 @@ class AuthHandler {
       }
       if (phone == null || phone.isEmpty) throw ValidationException('Phone is required');
       if (password == null || password.length < 6) {
-        throw ValidationException('Password must be at least 6 characters');\n      }
+        throw ValidationException('Password must be at least 6 characters');}
       if (role != 'customer' && role != 'provider') {
         throw ValidationException('Role must be customer or provider');
       }

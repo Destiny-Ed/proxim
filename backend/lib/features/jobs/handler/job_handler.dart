@@ -62,7 +62,7 @@ class JobHandler {
         }
       }
       final job = await _repo.create(body);
-      return created(job);
+      return ok(job);
     } catch (e) {
       return fail(e.toString());
     }

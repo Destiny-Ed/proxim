@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../../../core/providers/app_state.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/notion_card.dart';
-import 'jobs_list_screen.dart';
 
 class JobDetailScreen extends StatefulWidget {
   final String jobId;
@@ -97,7 +96,11 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     );
     if (ok == true) {
       try {
-        await context.read<AppState>().api.rateJob(widget.jobId, rating, review: reviewCtrl.text.trim());
+        await context.read<AppState>().api.rateJob(
+              widget.jobId,
+              rating,
+              review: reviewCtrl.text.trim(),
+            );
         await _load();
       } catch (e) {
         if (mounted) {

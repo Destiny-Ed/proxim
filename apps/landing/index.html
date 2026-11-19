@@ -4,30 +4,164 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Proxim — Trusted artisans, on demand</title>
+  <meta name="description" content="Book plumbers, electricians, stylists and more across Nigeria. Providers go online, accept jobs, and get paid." />
   <style>
+    :root {
+      --bg: #F7F6F3;
+      --surface: #FFFFFF;
+      --border: #E3E2DE;
+      --text: #1F1F1F;
+      --muted: #6B6B6B;
+      --accent: #2E7D32;
+      --accent-soft: #E8F5E9;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #F7F6F3; color: #1F1F1F; line-height: 1.5; }
-    .wrap { max-width: 960px; margin: 0 auto; padding: 48px 24px; }
-    h1 { font-size: 48px; font-weight: 700; letter-spacing: -1.5px; color: #2E7D32; }
-    .tag { font-size: 20px; color: #6B6B6B; margin-top: 8px; }
-    .cta { display: inline-block; margin-top: 32px; background: #2E7D32; color: white; padding: 14px 28px; border-radius: 10px; text-decoration: none; font-weight: 600; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 48px; }
-    .card { background: white; border: 1px solid #E3E2DE; border-radius: 12px; padding: 20px; }
-    .card h3 { font-size: 16px; margin-bottom: 6px; }
-    .card p { font-size: 14px; color: #6B6B6B; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    a { color: inherit; }
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 0; border-bottom: 1px solid var(--border);
+    }
+    .logo { font-size: 22px; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; }
+    nav a { margin-left: 20px; font-size: 14px; color: var(--muted); text-decoration: none; }
+    nav a:hover { color: var(--text); }
+    .hero { padding: 72px 0 48px; }
+    .hero h1 {
+      font-size: clamp(36px, 6vw, 56px);
+      font-weight: 700; letter-spacing: -1.5px; line-height: 1.1;
+      max-width: 640px;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero .sub {
+      margin-top: 16px; font-size: 18px; color: var(--muted); max-width: 520px;
+    }
+    .actions { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 12px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 14px 24px; border-radius: 10px; font-weight: 600; font-size: 15px;
+      text-decoration: none; border: none; cursor: pointer;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-ghost { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px; margin: 48px 0;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+    }
+    .card h3 { font-size: 16px; margin-bottom: 8px; }
+    .card p { font-size: 14px; color: var(--muted); }
+    .pill {
+      display: inline-block; font-size: 12px; font-weight: 600;
+      background: var(--accent-soft); color: var(--accent);
+      padding: 4px 10px; border-radius: 20px; margin-bottom: 10px;
+    }
+    .section { padding: 32px 0 64px; }
+    .section h2 { font-size: 28px; letter-spacing: -0.5px; margin-bottom: 8px; }
+    .section .lead { color: var(--muted); margin-bottom: 24px; max-width: 520px; }
+    .steps { display: grid; gap: 12px; }
+    .step {
+      display: flex; gap: 14px; align-items: flex-start;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px 18px;
+    }
+    .step-num {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: var(--accent-soft); color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 13px; flex-shrink: 0;
+    }
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 0; color: var(--muted); font-size: 13px;
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>Proxim</h1>
-    <p class="tag">Trusted artisans, on demand — across Nigeria.</p>
-    <p style="margin-top:16px;max-width:520px;color:#6B6B6B">Book plumbers, electricians, stylists, cleaners and more. Providers go online, accept jobs, deliver and get paid. Customers track every step.</p>
-    <a class="cta" href="#">Get the app</a>
-    <div class="grid">
-      <div class="card"><h3>For customers</h3><p>Browse verified artisans, request with budget &amp; details, track status timeline, pay from wallet, rate after completion.</p></div>
-      <div class="card"><h3>For providers</h3><p>Build portfolio, go online, accept jobs, update progress, earn with transparent commission.</p></div>
-      <div class="card"><h3>Built for Nigeria</h3><p>Naira wallet, local categories, Port Harcourt first — expanding nationwide.</p></div>
-    </div>
+    <header>
+      <div class="logo">Proxim</div>
+      <nav>
+        <a href="#customers">Customers</a>
+        <a href="#providers">Providers</a>
+        <a href="#how">How it works</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h1>Trusted artisans, <span>on demand</span></h1>
+      <p class="sub">
+        Book plumbers, electricians, stylists, cleaners and more across Nigeria.
+        Providers go online when available — you see who’s free, request, track, and pay.
+      </p>
+      <div class="actions">
+        <a class="btn btn-primary" href="#how">See how it works</a>
+        <a class="btn btn-ghost" href="https://github.com/Destiny-Ed/proxim" target="_blank" rel="noopener">View source</a>
+      </div>
+    </section>
+
+    <section class="grid" id="customers">
+      <div class="card">
+        <div class="pill">Customers</div>
+        <h3>Find & book in minutes</h3>
+        <p>Filter by category and online status. View portfolio, ratings and rates before you commit. Track every request on a clear timeline.</p>
+      </div>
+      <div class="card" id="providers">
+        <div class="pill">Providers</div>
+        <h3>Go online. Get jobs.</h3>
+        <p>Build your profile and portfolio. Toggle availability like a ride app. Accept work, update progress, earn with a transparent wallet.</p>
+      </div>
+      <div class="card">
+        <div class="pill">Nigeria-first</div>
+        <h3>Built for local reality</h3>
+        <p>Naira wallet, Port Harcourt first, categories that match how people actually hire help — plumbing, electrical, beauty, cleaning, car wash.</p>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <h2>How it works</h2>
+      <p class="lead">Bolt-style availability, full request lifecycle, wallet for flexible payment.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div>
+            <strong>Providers go online</strong>
+            <p style="color:var(--muted);font-size:14px;margin-top:4px">Open the app, complete profile, hit Go Online. Only online providers show up for customers.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div>
+            <strong>Customers request</strong>
+            <p style="color:var(--muted);font-size:14px;margin-top:4px">Browse by category, open a profile, send a job with title, details, budget and address.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div>
+            <strong>Track & complete</strong>
+            <p style="color:var(--muted);font-size:14px;margin-top:4px">Accept → start → complete on a shared timeline. Rate after the job. Wallet for top-ups and earnings.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap" style="padding:0">
+        Proxim · On-demand artisans for Nigeria · Demo: ada@proxim.ng / chinedu@proxim.ng (password123)
+      </div>
+    </footer>
   </div>
 </body>
 </html>

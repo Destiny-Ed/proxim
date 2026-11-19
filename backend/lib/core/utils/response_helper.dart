@@ -28,6 +28,10 @@ Response fail(Object error, {int status = 400}) {
   );
 }
 
+/// Convenience helpers (optional — prefer throwing AppException + fail())
+Response notFound(String message) => fail(NotFoundException(message));
+Response badRequest(String message) => fail(ValidationException(message));
+
 Future<Map<String, dynamic>> readJson(Request request) async {
   final body = await request.readAsString();
   if (body.isEmpty) return {};

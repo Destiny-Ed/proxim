@@ -1,60 +1,60 @@
 import 'package:flutter/material.dart';
-
 import '../theme/app_theme.dart';
 
-/// Soft card with subtle border — Notion aesthetic.
 class NotionCard extends StatelessWidget {
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+  final VoidCallback? onTap;
+  final Color? color;
+
   const NotionCard({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.all(16),
+    this.padding,
     this.onTap,
-    this.margin,
+    this.color,
   });
-
-  final Widget child;
-  final EdgeInsetsGeometry padding;
-  final VoidCallback? onTap;
-  final EdgeInsetsGeometry? margin;
 
   @override
   Widget build(BuildContext context) {
-    final card = Container(
-      margin: margin,
+    final content = Container(
+      width: double.infinity,
+      padding: padding ?? const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: color ?? AppTheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppTheme.border),
       ),
-      child: Material(
+      child: child,
+    );
+    if (onTap != null) {
+      return Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(12),
-          child: Padding(padding: padding, child: child),
+          child: content,
         ),
-      ),
-    );
-    return card;
+      );
+    }
+    return content;
   }
 }
 
-/// Status pill used in job timeline and lists.
-class StatusPill extends StatelessWidget {
-  const StatusPill({super.key, required this.status});
-
+class StatusChip extends StatelessWidget {
   final String status;
+  const StatusChip({super.key, required this.status});
 
   Color get _color {
-    switch (status) {
+    switch (status.toLowerCase()) {
       case 'pending':
         return AppTheme.warning;
       case 'accepted':
-        return AppTheme.info;
       case 'in_progress':
-        return AppTheme.accent;
+        return const Color(0xFF3B82F6);
       case 'completed':
-        return const Color(0xFF2E7D32);
+        return AppTheme.online;
+      case 'rejected':
       case 'cancelled':
         return AppTheme.danger;
       default:
@@ -63,9 +63,9 @@ class StatusPill extends StatelessWidget {
   }
 
   String get _label {
-    switch (status) {
+    switch (status.toLowerCase()) {
       case 'in_progress':
-        return 'In progress';
+        return 'In Progress';
       default:
         return status[0].toUpperCase() + status.substring(1);
     }
@@ -76,56 +76,44 @@ class StatusPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: _color.withValues(alpha: 0.12),
+        color: _color.withOpacity(0.12),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         _label,
-        style: TextStyle(
-          color: _color,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
+        style: TextStyle(color: _color, fontSize: 12, fontWeight: FontWeight.w600),
       ),
     );
   }
 }
 
-/// Simple empty state.
-class EmptyState extends StatelessWidget {
-  const EmptyState({
-    super.key,
-    required this.message,
-    this.icon = Icons.inbox_outlined,
-    this.action,
-  });
-
-  final String message;
-  final IconData icon;
-  final Widget? action;
+class OnlineBadge extends StatelessWidget {
+  final bool isOnline;
+  const OnlineBadge({super.key, required this.isOnline});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 48, color: AppTheme.textSecondary.withValues(alpha: 0.5)),
-            const SizedBox(height: 16),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: AppTheme.textSecondary, fontSize: 15),
-            ),
-            if (action != null) ...[
-              const SizedBox(height: 20),
-              action!,
-            ],
-          ],
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: isOnline ? AppTheme.online : AppTheme.textSecondary,
+            shape: BoxShape.circle,
+          ),
         ),
-      ),
+        const SizedBox(width: 6),
+        Text(
+          isOnline ? 'Online' : 'Offline',
+          style: TextStyle(
+            fontSize: 12,
+            color: isOnline ? AppTheme.online : AppTheme.textSecondary,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     );
   }
 }

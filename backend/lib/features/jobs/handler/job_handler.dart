@@ -1,136 +1,138 @@
-import 'dart:convert';
-
 import 'package:shelf/shelf.dart';
-import 'package:shelf_router/shelf_router.dart';
-
+import '../../../core/di/injector.dart';
+import '../../../core/error/app_exception.dart';
 import '../../../core/utils/response_helper.dart';
-import '../repository/job_repository.dart';
 
 class JobHandler {
-  final JobRepository _repo;
-
-  JobHandler(this._repo);
-
-  Router get router {
-    final r = Router();
-
-    r.get('/', _list);
-    r.get('/<id>', _get);
-    r.post('/', _create);
-    r.patch('/<id>', _update);
-    r.post('/<id>/accept', _accept);
-    r.post('/<id>/start', _start);
-    r.post('/<id>/complete', _complete);
-    r.post('/<id>/cancel', _cancel);
-
-    return r;
+  Future<Map<String, dynamic>> _requireUser(Request request) async {
+    final token = getBearerToken(request);
+    if (token == null) throw UnauthorizedException();
+    final user = await Injector.authRepo.me(token);
+    if (user == null) throw UnauthorizedException();
+    return user;
   }
 
-  Future<Response> _list(Request request) async {
+  Future<Response> create(Request request) async {
     try {
-      final customerId = request.url.queryParameters['customerId'];
-      final providerId = request.url.queryParameters['providerId'];
+      final user = await _requireUser(request);
+      if (user['role'] != 'customer') throw ValidationException('Only customers can create job requests');
+
+      final body = await readJson(request);
+      final providerId = body['providerId']?.toString();
+      final title = body['title']?.toString().trim();
+      final description = body['description']?.toString().trim();
+      final budget = (body['budget'] as num?)?.toDouble();
+      final address = body['address']?.toString().trim();
+      final preferredTime = body['preferredTime']?.toString();
+
+      if (providerId == null || providerId.isEmpty) throw ValidationException('providerId is required');
+      if (title == null || title.isEmpty) throw ValidationException('Title is required');
+      if (description == null || description.isEmpty) throw ValidationException('Description is required');
+      if (budget == null || budget <= 0) throw ValidationException('Valid budget is required');
+
+      final provider = await Injector.providerRepo.getById(providerId);
+      if (provider == null) throw NotFoundException('Provider not found');
+
+      final job = await Injector.jobRepo.create({
+        'customerId': user['id'],
+        'customerName': user['name'],
+        'providerId': providerId,
+        'providerName': provider['name'],
+        'title': title,
+        'description': description,
+        'budget': budget,
+        'address': address ?? '',
+        'preferredTime': preferredTime,
+        'category': provider['category'],
+      });
+      return ok(job, status: 201);
+    } catch (e) {
+      return fail(e);
+    }
+  }
+
+  Future<Response> list(Request request) async {
+    try {
+      final user = await _requireUser(request);
       final status = request.url.queryParameters['status'];
-      final jobs = await _repo.list(
-        customerId: customerId,
-        providerId: providerId,
-        status: status,
-      );
+      List<Map<String, dynamic>> jobs;
+      if (user['role'] == 'provider') {
+        jobs = await Injector.jobRepo.list(providerId: user['id'], status: status);
+      } else {
+        jobs = await Injector.jobRepo.list(customerId: user['id'], status: status);
+      }
       return ok(jobs);
     } catch (e) {
-      return fail(e.toString());
+      return fail(e);
     }
   }
 
-  Future<Response> _get(Request request, String id) async {
+  Future<Response> getById(Request request, String id) async {
     try {
-      final job = await _repo.getById(id);
-      if (job == null) return notFound('Job not found');
-      return ok(job);
-    } catch (e) {
-      return fail(e.toString());
-    }
-  }
-
-  Future<Response> _create(Request request) async {
-    try {
-      final body = jsonDecode(await request.readAsString()) as Map<String, dynamic>;
-      final required = ['customerId', 'title', 'description', 'category'];
-      for (final k in required) {
-        if (body[k] == null || (body[k] is String && (body[k] as String).isEmpty)) {
-          return badRequest('Missing required field: $k');
-        }
+      final user = await _requireUser(request);
+      final job = await Injector.jobRepo.getById(id);
+      if (job == null) throw NotFoundException('Job not found');
+      // simple ownership check
+      if (job['customerId'] != user['id'] && job['providerId'] != user['id']) {
+        throw UnauthorizedException('Not your job');
       }
-      final job = await _repo.create(body);
       return ok(job);
     } catch (e) {
-      return fail(e.toString());
+      return fail(e);
     }
   }
 
-  Future<Response> _update(Request request, String id) async {
+  Future<Response> updateStatus(Request request, String id) async {
     try {
-      final body = jsonDecode(await request.readAsString()) as Map<String, dynamic>;
-      final job = await _repo.update(id, body);
-      return ok(job);
+      final user = await _requireUser(request);
+      final body = await readJson(request);
+      final status = body['status']?.toString().toLowerCase();
+      final note = body['note']?.toString();
+
+      if (status == null) throw ValidationException('status is required');
+      final allowed = ['accepted', 'rejected', 'in_progress', 'completed', 'cancelled'];
+      if (!allowed.contains(status)) throw ValidationException('Invalid status');
+
+      final job = await Injector.jobRepo.getById(id);
+      if (job == null) throw NotFoundException('Job not found');
+
+      // Providers can accept/reject/in_progress/completed
+      // Customers can cancel (if still pending)
+      if (user['role'] == 'provider' && job['providerId'] == user['id']) {
+        if (!['accepted', 'rejected', 'in_progress', 'completed'].contains(status)) {
+          throw ValidationException('Providers cannot set status to $status');
+        }
+      } else if (user['role'] == 'customer' && job['customerId'] == user['id']) {
+        if (status != 'cancelled') throw ValidationException('Customers can only cancel');
+        if (job['status'] != 'pending') throw ValidationException('Can only cancel pending requests');
+      } else {
+        throw UnauthorizedException();
+      }
+
+      final updated = await Injector.jobRepo.updateStatus(id, status, note: note);
+      return ok(updated);
     } catch (e) {
-      return fail(e.toString());
+      return fail(e);
     }
   }
 
-  Future<Response> _accept(Request request, String id) async {
+  Future<Response> rate(Request request, String id) async {
     try {
-      final body = jsonDecode(await request.readAsString()) as Map<String, dynamic>;
-      final providerId = body['providerId'] as String?;
-      if (providerId == null) return badRequest('providerId required');
-      final job = await _repo.update(id, {
-        'status': 'accepted',
-        'providerId': providerId,
-        'note': body['note'],
-      });
-      return ok(job);
+      final user = await _requireUser(request);
+      if (user['role'] != 'customer') throw ValidationException('Only customers can rate');
+      final body = await readJson(request);
+      final rating = body['rating'] as int?;
+      final review = body['review']?.toString();
+      if (rating == null || rating < 1 || rating > 5) {
+        throw ValidationException('Rating must be 1–5');
+      }
+      final job = await Injector.jobRepo.getById(id);
+      if (job == null) throw NotFoundException('Job not found');
+      if (job['customerId'] != user['id']) throw UnauthorizedException();
+      final updated = await Injector.jobRepo.rate(id, rating, review);
+      return ok(updated);
     } catch (e) {
-      return fail(e.toString());
-    }
-  }
-
-  Future<Response> _start(Request request, String id) async {
-    try {
-      final body = jsonDecode(await request.readAsString()) as Map<String, dynamic>? ?? {};
-      final job = await _repo.update(id, {
-        'status': 'in_progress',
-        'note': body['note'],
-      });
-      return ok(job);
-    } catch (e) {
-      return fail(e.toString());
-    }
-  }
-
-  Future<Response> _complete(Request request, String id) async {
-    try {
-      final body = jsonDecode(await request.readAsString()) as Map<String, dynamic>? ?? {};
-      final job = await _repo.update(id, {
-        'status': 'completed',
-        'note': body['note'],
-        'completedAt': DateTime.now().toIso8601String(),
-      });
-      return ok(job);
-    } catch (e) {
-      return fail(e.toString());
-    }
-  }
-
-  Future<Response> _cancel(Request request, String id) async {
-    try {
-      final body = jsonDecode(await request.readAsString()) as Map<String, dynamic>? ?? {};
-      final job = await _repo.update(id, {
-        'status': 'cancelled',
-        'note': body['note'],
-      });
-      return ok(job);
-    } catch (e) {
-      return fail(e.toString());
+      return fail(e);
     }
   }
 }

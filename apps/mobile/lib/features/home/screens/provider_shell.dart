@@ -3,6 +3,7 @@ import '../../jobs/screens/jobs_list_screen.dart';
 import '../../providers/screens/provider_dashboard_screen.dart';
 import '../../wallet/screens/wallet_screen.dart';
 import '../../profile/screens/profile_screen.dart';
+import '../../settings/screens/settings_screen.dart';
 
 class ProviderShell extends StatefulWidget {
   const ProviderShell({super.key});
@@ -19,6 +20,7 @@ class _ProviderShellState extends State<ProviderShell> {
     JobsListScreen(),
     WalletScreen(),
     ProfileScreen(),
+    SettingsScreen(),
   ];
 
   @override
@@ -32,11 +34,13 @@ class _ProviderShellState extends State<ProviderShell> {
         child: BottomNavigationBar(
           currentIndex: _index,
           onTap: (i) => setState(() => _index = i),
+          type: BottomNavigationBarType.fixed,
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), label: 'Home'),
             BottomNavigationBarItem(icon: Icon(Icons.work_outline_rounded), label: 'Jobs'),
             BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet_outlined), label: 'Earnings'),
             BottomNavigationBarItem(icon: Icon(Icons.person_outline_rounded), label: 'Profile'),
+            BottomNavigationBarItem(icon: Icon(Icons.settings_outlined), label: 'Settings'),
           ],
         ),
       ),

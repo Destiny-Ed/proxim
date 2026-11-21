@@ -5,6 +5,8 @@ import 'core/providers/app_state.dart';
 import 'features/auth/screens/login_screen.dart';
 import 'features/home/screens/customer_shell.dart';
 import 'features/home/screens/provider_shell.dart';
+import 'features/onboarding/screens/splash_screen.dart';
+import 'features/onboarding/screens/onboarding_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,11 +36,16 @@ class _Root extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
-    if (state.loading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+
+    // Splash while restoring session (never hangs forever — timeouts in ApiService)
+    if (state.showSplash || state.loading) {
+      return const SplashScreen();
     }
+
+    if (!state.onboardingDone) {
+      return const OnboardingScreen();
+    }
+
     if (!state.isLoggedIn) return const LoginScreen();
     if (state.isProvider) return const ProviderShell();
     return const CustomerShell();

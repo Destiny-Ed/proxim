@@ -3,6 +3,7 @@ import '../../providers/screens/browse_providers_screen.dart';
 import '../../jobs/screens/jobs_list_screen.dart';
 import '../../wallet/screens/wallet_screen.dart';
 import '../../profile/screens/profile_screen.dart';
+import '../../settings/screens/settings_screen.dart';
 
 class CustomerShell extends StatefulWidget {
   const CustomerShell({super.key});
@@ -19,6 +20,7 @@ class _CustomerShellState extends State<CustomerShell> {
     JobsListScreen(),
     WalletScreen(),
     ProfileScreen(),
+    SettingsScreen(),
   ];
 
   @override
@@ -32,11 +34,13 @@ class _CustomerShellState extends State<CustomerShell> {
         child: BottomNavigationBar(
           currentIndex: _index,
           onTap: (i) => setState(() => _index = i),
+          type: BottomNavigationBarType.fixed,
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.search_rounded), label: 'Browse'),
             BottomNavigationBarItem(icon: Icon(Icons.receipt_long_rounded), label: 'Requests'),
             BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet_outlined), label: 'Wallet'),
             BottomNavigationBarItem(icon: Icon(Icons.person_outline_rounded), label: 'Profile'),
+            BottomNavigationBarItem(icon: Icon(Icons.settings_outlined), label: 'Settings'),
           ],
         ),
       ),

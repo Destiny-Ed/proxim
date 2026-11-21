@@ -13,13 +13,16 @@ class AuthHandler {
       final password = body['password']?.toString();
       final role = body['role']?.toString().toLowerCase() ?? 'customer';
 
-      if (name == null || name.isEmpty) throw ValidationException('Name is required');
+      if (name == null || name.isEmpty)
+        throw ValidationException('Name is required');
       if (email == null || email.isEmpty || !email.contains('@')) {
         throw ValidationException('Valid email is required');
       }
-      if (phone == null || phone.isEmpty) throw ValidationException('Phone is required');
+      if (phone == null || phone.isEmpty)
+        throw ValidationException('Phone is required');
       if (password == null || password.length < 6) {
-        throw ValidationException('Password must be at least 6 characters');}
+        throw ValidationException('Password must be at least 6 characters');
+      }
       if (role != 'customer' && role != 'provider') {
         throw ValidationException('Role must be customer or provider');
       }
@@ -45,7 +48,8 @@ class AuthHandler {
       if (email == null || password == null) {
         throw ValidationException('Email and password are required');
       }
-      final user = await Injector.authRepo.login(email: email, password: password);
+      final user =
+          await Injector.authRepo.login(email: email, password: password);
       return ok(user);
     } catch (e) {
       return fail(e);

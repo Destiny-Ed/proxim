@@ -11,12 +11,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ApiService {
   static const String baseUrl = String.fromEnvironment(
     'API_BASE',
-    defaultValue: 'http://10.0.2.2:8080',
+    defaultValue: 'http://0.0.0.0:8080',
   );
 
   String? _token;
 
-  // ── Token persistence ──────────────────────────
+  // ── Token persistence 
   Future<void> loadToken() async {
     final prefs = await SharedPreferences.getInstance();
     _token = prefs.getString('token');
@@ -70,7 +70,7 @@ class ApiService {
     throw Exception(message);
   }
 
-  // ── Auth ───────────────────────────────────────
+  // ── Auth ─────────────
   Future<Map<String, dynamic>> register({
     required String name,
     required String email,
@@ -118,7 +118,7 @@ class ApiService {
     return _handle(res);
   }
 
-  // ── Providers ──────────────────────────────────
+  // ── Providers ────────
   Future<List<dynamic>> listProviders({
     String? category,
     String? city,
@@ -162,7 +162,7 @@ class ApiService {
     return _handle(res);
   }
 
-  // ── Jobs ───────────────────────────────────────
+  // ── Jobs ─────────────
   Future<Map<String, dynamic>> createJob(Map<String, dynamic> data) async {
     final res = await http.post(
       Uri.parse('$baseUrl/api/jobs'),
@@ -221,7 +221,7 @@ class ApiService {
     return _handle(res);
   }
 
-  // ── Wallet ─────────────────────────────────────
+  // ── Wallet ───────────
   Future<Map<String, dynamic>> getWallet() async {
     final res = await http.get(
       Uri.parse('$baseUrl/api/wallet'),

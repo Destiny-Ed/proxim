@@ -29,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await context.read<AppState>().login(_email.text.trim(), _password.text);
     } catch (_) {
+      print(context.read<AppState>().error ?? 'Login failed');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(context.read<AppState>().error ?? 'Login failed')),

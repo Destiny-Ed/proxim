@@ -37,7 +37,6 @@ class _Root extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
 
-    // Splash while restoring session (never hangs forever — timeouts in ApiService)
     if (state.showSplash || state.loading) {
       return const SplashScreen();
     }
